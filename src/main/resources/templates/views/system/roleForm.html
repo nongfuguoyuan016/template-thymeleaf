@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{::link},~{::style})">
+    <title>角色修改</title>
+    <link rel="stylesheet" th:href="@{/static/h-ui/lib/zTree/v3/css/metroStyle/metroStyle.css}" />
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1%;
+        }
+        .select2-container{
+            width: 20%;
+        }
+    </style>
+</head>
+<body>
+
+<article class="page-container">
+    <form id="inputForm" th:object="${role}" th:action="@{/sys/role/save}" method="post" class="form form-horizontal">
+        <hidden path="id"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>归属机构：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="office" class="layerselect" th:attr="data-title='机构',data-url='/sys/office/treeData?isShowHide=0'">
+                    <input id="officeId" th:field="*{office.id}" type="hidden" />
+                    <input id="officeName" th:field="*{office.name}" type="text" class="input-text required" readonly/>
+                    <a id="parentMenuBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>角色名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="oldName" name="oldName" th:value="*{name}" type="hidden">
+                <input th:field="*{name}"  htmlEscape="false" maxlength="50" class="input-text required"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>英文名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="oldEnname" name="oldEnname" type="hidden" th:value="*{enname}">
+                <input th:field="*{enname}" htmlEscape="false" maxlength="50" class="input-text required" placeholder="工作流用户组标识"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input th:field="*{sort}" htmlEscape="false" maxlength="50" class="input-text required" placeholder="角色排序"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">角色类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select id="roleType" name="roleType" class="">
+                    <option th:selected="*{roleType eq 'assignment'}" value="assignment">任务分配</option>
+                    <option th:selected="*{roleType eq 'security-role'}" value="security-role">管理角色</option>
+                    <option th:selected="*{roleType eq 'user'}" value="user">普通角色</option>
+                </select>
+                <span class="help-inline" title="activiti有3种预定义的组类型：security-role、assignment、user 如果使用Activiti Explorer，需要security-role才能看到manage页签，需要assignment才能claim任务">
+					工作流组用户组类型（任务分配：assignment、管理角色：security-role、普通角色：user）</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">是否系统数据：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select th:field="*{sysData}">
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <span class="help-inline">“是”代表此数据只有超级管理员能进行修改，“否”则表示拥有角色修改人员的权限都能进行修改</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">是否可用：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select th:field="*{useable}">
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <span class="help-inline">“是”代表此数据可用，“否”则表示此数据不可用</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">数据范围：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select th:field="*{dataScope}" class="">
+                    <option th:each="scope : ${scopes}" th:text="${scope.label}" th:value="${scope.value}"></option>
+                </select>
+                <span class="help-inline">特殊情况下，设置为“按明细设置”，可进行跨机构授权</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">角色授权：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="menuTree" class="ztree" style="margin-top:3px;float:left;"></div>
+                <input type="hidden" th:field="*{menuIds}"/>
+                <div id="officeTree" class="ztree" style="margin-left:100px;margin-top:3px;float:left;"></div>
+                <input type="hidden" th:field="*{officeIds}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <shiroPermission th:if="${changeable}" name="sys:role:edit"><input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/></shiroPermission>
+                <input id="back_btn" class="btn btn-default radius" type="button" value="&nbsp;&nbsp;返回&nbsp;&nbsp;"/>
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+
+<script th:src="@{/static/h-ui/lib/zTree/v3/js/jquery.ztree.all-3.5.js}" type="text/javascript"></script>
+<script th:src="@{/static/h-ui/lib/zTree/v3/js/jquery.ztree.exhide-3.5.js}" type="text/javascript"></script>
+<script type="text/javascript" th:src="@{/static/common/js/select.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#back_btn").click(function(){
+            layer_close();
+        });
+
+        registTreeSelect("office");
+
+        $("#name").focus();
+        $("#inputForm").validate({
+            onsubmit:function(element) { $(element).valid(); },
+            rules: {
+                name: {remote: "[[@{/sys/role/checkName?oldName=}]]" + encodeURIComponent("[[${role.name}]]")},
+                enname: {remote: "[[@{/sys/role/checkEnname?oldEnname=}]]" + encodeURIComponent("[[${role.enname}]]")},
+                sort:{digits:true}
+            },
+            messages: {
+                name: {required:'请填写角色名',remote: "角色名已存在"},
+                enname: {required:'请填写角色英文名',remote: "英文名已存在"},
+                sort:{digits:"请输入整数"}
+            },
+            submitHandler: function(form){
+                var ids = [], nodes = tree.getCheckedNodes(true);
+                for(var i=0; i<nodes.length; i++) {
+                    ids.push(nodes[i].id);
+                }
+                $("#menuIds").val(ids);
+                var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
+                for(var i=0; i<nodes2.length; i++) {
+                    ids2.push(nodes2[i].id);
+                }
+                $("#officeIds").val(ids2);
+                submitForm(form);
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                $("#messageBox").text("输入有误，请先更正。");
+                if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+
+        var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false},
+            data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
+                    tree.checkNode(node, !node.checked, true, true);
+                    return false;
+                }}};
+
+        // 用户-菜单
+        var zNodes=[(${menus})] ;
+        // 初始化树结构
+        var tree = $.fn.zTree.init($("#menuTree"), setting, zNodes);
+        // 不选择父节点
+        tree.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+        // 默认选择节点
+        var ids = "[[${role.menuIds}]]".split(",");
+        for(var i=0; i<ids.length; i++) {
+            var node = tree.getNodeByParam("id", ids[i]);
+            try{tree.checkNode(node, true, false);}catch(e){}
+        }
+        // 默认展开全部节点
+        tree.expandAll(true);
+
+        // 用户-机构
+        var zNodes2=[(${offices})] ;
+        // 初始化树结构
+        var tree2 = $.fn.zTree.init($("#officeTree"), setting, zNodes2);
+        // 不选择父节点
+        tree2.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+        // 默认选择节点
+        var ids2 = "[[${role.officeIds}]]".split(",");
+        for(var i=0; i<ids2.length; i++) {
+            var node = tree2.getNodeByParam("id", ids2[i]);
+            try{tree2.checkNode(node, true, false);}catch(e){}
+        }
+        // 默认展开全部节点
+        tree2.expandAll(true);
+        // 刷新（显示/隐藏）机构
+        refreshOfficeTree();
+        $("#dataScope").change(function(){
+            refreshOfficeTree();
+        });
+    });
+    function refreshOfficeTree(){
+        if($("#dataScope").val()==9){
+            $("#officeTree").show();
+        }else{
+            $("#officeTree").hide();
+        }
+    }
+
+</script>
+</html>

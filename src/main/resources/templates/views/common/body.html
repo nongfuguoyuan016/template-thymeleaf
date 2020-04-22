@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="breadcrumb"  class="breadcrumb">
+    <i class="Hui-iconfont Hui-iconfont-weizhi mr-5"></i>
+    <script type="text/javascript">
+        var first = self.frameElement.getAttribute('data-first');
+        var second = self.frameElement.getAttribute('data-second');
+        var third = self.frameElement.getAttribute('data-third');
+        var _split = '<span class="c-gray en">&nbsp;/&nbsp;</span>';
+        if(first){
+            document.write(first);
+        }
+        if(second){
+            document.write(_split + second);
+        }
+        if(third){
+            document.write(_split + third);
+        }
+    </script>
+
+    <a class="btn btn-success radius r f-r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
+
+</html>

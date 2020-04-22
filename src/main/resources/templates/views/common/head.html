@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_head(title,links,styles)">
+    <meta charset="utf-8">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title th:replace="${title}">title</title>
+    <link rel="stylesheet" th:href="@{/static/h-ui/static/h-ui/css/H-ui.css}" />
+    <link rel="stylesheet" th:href="@{/static/h-ui/static/h-ui.admin.pro.iframe/css/h-ui.admin.pro.iframe.css}" />
+    <link rel="stylesheet" th:href="@{/static/h-ui/static/h-ui.admin.pro.iframe/skin/default/skin.css}" />
+    <link rel="stylesheet" th:href="@{/static/h-ui/lib/Hui-iconfont/1.0.9/iconfont.css}" />
+    <link rel="stylesheet" th:href="@{/static/select2/css/select2.min.css}" />
+    <link rel="stylesheet" th:href="@{/static/common/css/common.css}" />
+    <th:block th:replace="${links}" />
+    <th:block th:replace="${styles}" />
+</head>
+</html>

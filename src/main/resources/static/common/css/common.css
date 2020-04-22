@@ -1,0 +1,149 @@
+@charset "utf-8";
+/*浏览器滚轮 START*/
+/*滚动条整体部分*/
+::-webkit-scrollbar {width: 10px; height: 10px; border:none; }
+/*内层轨道,滚动条中间部分*/
+::-webkit-scrollbar-track-piece {border: none; position: absolute; padding: 0; box-shadow: none; background-color:#ddd; border-radius: 1px;}
+/*垂直滚动条*/
+::-webkit-scrollbar-thumb:vertical {background-color: #999; border-radius: 5px; border: none;}
+/*水平滚动条*/
+::-webkit-scrollbar-thumb:horizontal {background-color: #999; border-radius: 5px; border: none;}
+/*两端按钮*/
+::-webkit-scrollbar-button:vertical{display:none}
+/*垂直外层轨道*/
+::-webkit-scrollbar-track:vertical{background-color:black}
+/*垂直边角*/
+::-webkit-scrollbar-corner:vertical{background-color:#535353}
+/*浏览器滚轮 END*/
+
+.laydate-footer-btns span:hover{
+    background: #002140;
+    color: #FFFFFF!important;
+}
+.layui-laydate-footer>span{
+    color: #002140!important;
+}
+.layui-laydate-footer>span:hover{
+    color: #002140!important;
+}
+.select-drop {position: fixed;}
+.select2-container{width: 20%;text-align: center;min-width: 100px;}
+.bootstrap-table .fixed-table-container .fixed-table-footer table {width: 100% !important;border-bottom: 1px solid #e0e0e0;}
+
+/*表单宽度*/
+.form .input-name,.form .input-model{width: 80px;}
+.form .input-name2 {width: 100px;}
+.form .input-name3{width: 200px;}
+
+.form .input-phone{width: 120px;}
+.form .input-select{width: 80px;}
+.form .input-select2{width: 100px;}
+.form .input-select3{width: 110px;}
+
+.form .input-number{width:150px;}
+.form .input-date {width: 100px;}
+.form .input-month {width: 80px;}
+
+.form .input-min {width: 30px}
+.form .input-mini {width: 90px}
+.form .input-small {width: 120px}
+.form .input-medium {width: 163px}
+.form .input-xxlarge {width: 460px}
+
+.Hui-admin-content .form{margin-top: -15px;}
+.form .row {line-height: 34px;}
+.row .form-label {line-height: 34px; padding: 0; text-align: right;}
+.row .formControls {line-height: 34px;padding:0;}
+.form .panel { margin-top: -1px;}
+
+.formControls label.error, .form-controls label.error{ top: 0px}
+
+
+
+.layui-timeline{padding-left:5px}
+.layui-timeline-item{position:relative;padding-bottom:20px}
+.layui-timeline-axis{
+    position:absolute;
+    left:-5px;
+    top:0;
+    z-index:10;
+    width:20px;
+    height:20px;
+    line-height:20px;
+    background-color:#fff;
+    color:#5FB878;
+    border-radius:50%;
+    text-align:center;
+    cursor:pointer
+}
+.layui-timeline-axis:hover{color:#FF5722}
+.layui-timeline-item:before{content:'';position:absolute;left:5px;top:0;z-index:0;width:1px;height:100%}
+/*.layui-timeline-item:last-child:before{display:none}*/
+.layui-timeline-item:before{display:block}
+.layui-timeline-content{padding-left:25px}
+.layui-timeline-title{position:relative;margin-bottom:10px;padding: 0;}
+.layui-timeline-item:before, hr {
+    background-color: #e6e6e6;
+}
+
+/*日期控件样式*/
+.form .datetime-input {
+    padding: 4px;
+    box-sizing: border-box;
+    background: url(../images/datetimepicker.gif) right center no-repeat #fff;
+}
+/*不可点击状态下，hover的样式*/
+.input-text[disabled]:hover, .textarea[disabled]:hover,.input-text[readonly]:hover,.textarea[readonly]:hover{
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.input-text.focus[disabled],
+.textarea.focus[disabled]{ border:1px solid  #ddd;}
+
+.form .datetime-input[disabled]{background-color:#f3f3f3;}
+
+/*弹出层选择*/
+.layerselect {overflow: hidden;padding-top:3px;line-height: 34px;position: relative;}
+.layerselect .input-text{ background-color: #fff;border-radius: 4px;padding-right: 28px;display: block;}
+.layerselect .input-text[disabled]{background-color:#f3f3f3;}
+.layerselect .btn {padding: 5px 6px;border-radius: 0 4px 4px 0; position: absolute;right: 0;top: 3px;}
+.layerselect .btn-default {background-color: #f3f3f3;}
+/*验证提示位置调整*/
+.layerselect label.error{right: 40px;}
+/*表格样式*/
+.table-box{margin:15px 0;}
+.table-box .bootstrap-table {margin-top: -1px;}
+.table-box .bootstrap-table tr:nth-child(even) {
+    background: #f5fafe;
+}
+
+.table-box .bootstrap-table th {
+    background: #f5fafe;
+}
+
+/*选择文件、下载文件*/
+.uploader-list .item,.downloader-list .item {
+    background-color: #e6e6e6;
+    color: #333;
+    display: inline-block;
+    border-radius: 3px;
+    padding: 0 10px;
+    margin: 0 5px 5px 0;
+}
+.uploader-list .item label{
+    margin-right: 10px;
+}
+.uploader-list a,.downloader-list a{
+    cursor: pointer;
+}
+.uploader-list a label,.downloader-list a label {cursor: pointer;}
+
+.downloader-list a:hover{
+    text-decoration: none;
+}
+
+a i {
+    font-size: 15px;
+    padding: 2px;
+}

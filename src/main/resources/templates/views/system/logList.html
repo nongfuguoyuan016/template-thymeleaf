@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{::link},~{::style})">
+    <title>日志管理</title>
+    <link th:href="@{/static/bootstrapTable/table.css}" rel="stylesheet"/>
+    <link th:href="@{/static/bootstrapTable/bootstrap-table.css}" rel="stylesheet"/>
+    <style type="text/css">
+        .table-box{
+            margin:1% 1%;
+        }
+        #logTable{
+            display: table;
+        }
+        .check-box{
+            margin-left: 15px;
+        }
+        .icheckbox-blue {
+            top: 9px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="common/body::breadcrumb"></div>
+<div class="Hui-admin-content clearfix">
+    <div class="text-c">
+        <form class="form form-horizontal">
+            <div class="row cl">
+                <div class="col-xs-12 col-sm-6 col-lg-3">
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-lg-3">操作菜单：</label>
+                        <div class="formControls col-xs-8 col-lg-9">
+                            <input type="text" class="input-text" id="title" name="title">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-3">
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-lg-3">URI：</label>
+                        <div class="formControls col-xs-8 col-lg-9">
+                            <input type="text" class="input-text" id="requestUri" name="requestUri">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-3">
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-lg-3">日期范围：</label>
+                        <div class="formControls col-xs-3 col-lg-4">
+                            <input type="text" class="input-text datetime-input" readonly="readonly" id="beginDate" name="beginDate">
+                        </div>
+                        <span class="f-l">&nbsp;-&nbsp;</span>
+                        <div class="formControls col-xs-3 col-lg-4">
+                            <input type="text" class="input-text datetime-input" readonly="readonly" id="endDate" name="endDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-3">
+                    <div class="row cl">
+                        <div class="formControls col-xs-7 col-xs-offset-2 col-lg-offset-0">
+                            <div class="check-box">
+                                <input type="checkbox" id="exception" name="exception">
+                                <label for="exception" style="vertical-align: middle;">只查询异常信息</label>
+                            </div>
+                        </div>
+                        <div class="formControls col-xs-1">
+                            <button type="button" class="btn radius btn-success" id="search_btn"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="table-box">
+    <div id="logTable"></div>
+</div>
+<div th:replace="common/foot::common_foot"></div>
+</body>
+
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table-zh-CN.js}"></script>
+<script type="text/javascript" th:src="@{/static/h-ui/lib/laydate/laydate.js}"></script>
+<script type="text/javascript">
+    var temp = {};
+    $(document).ready(function(){
+        $('#exception').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        laydate.render({
+            elem: '#beginDate',
+            theme: '#002140'
+        });
+
+        laydate.render({
+            elem: '#endDate',
+            theme: '#002140'
+        });
+
+
+        $("#search_btn").click(function(){
+            temp = {
+                title: $('#title').val(),
+                requestUri: $('#requestUri').val(),
+                beginDate: $('#beginDate').val() ? $('#beginDate').val() + ' 00:00:00' : null,
+                endDate: $('#endDate').val() ? $('#endDate').val() + ' 23:59:59' : null,
+                exception: $('#exception').prop('checked') ? '1' : null
+            };
+            $("#logTable").bootstrapTable('refresh',{pageNum:1});
+        })
+
+        initTable();
+
+    });
+
+    function requestParams(params){
+        temp.pageNo = params.offset/params.limit+1 ;
+        temp.pageSize = pageSize = params.limit ;
+        return temp ;
+    }
+
+    function initTable(){
+        var url ="[[@{/sys/log/list/data}]]" ;
+        $("#logTable").bootstrapTable({
+            method:'get',
+            cache:'false',
+            dataType:'JSON',
+            pagination: true,
+            pageNumber:1,
+            pageSize: 10,
+            pageList: [10,15,20],
+            queryParams:requestParams,
+            url:url,
+            sidePagination:'server',
+            search:false,
+            idField:'id',
+            columns:[
+                {
+                    title:'序号',
+                    align:'center',
+                    width:40,
+                    formatter:function(value, row, index) {
+                        var pageSize=$("#logTable").bootstrapTable('getOptions').pageSize;
+                        var pageNumber=$("#logTable").bootstrapTable('getOptions').pageNumber;
+                        return pageSize*(pageNumber-1)+index+1;
+                    },
+                },
+                {
+                    field:'title',
+                    title:'操作菜单',
+                    align:'center'
+                },{
+                    field:'requestUri',
+                    title:'URI',
+                    align:'center'
+                },{
+                    field:'method',
+                    title:'提交方式',
+                    align:'center'
+                },{
+                    field:'remoteAddr',
+                    title:'操作者IP',
+                    align:'center'
+                },{
+                    field:'createDate',
+                    title:'操作时间',
+                    align:'center'
+                },{
+                    field:'params',
+                    title:'提交的数据',
+                    width:'20%',
+                    align:'center',
+                    valign:'middle'
+                },{
+                    field:'exception',
+                    title:'异常',
+                    width:'20%',
+                    align:'center',
+                    valign:'middle',
+                    escape:true,
+                    formatter:function(value,row,index){
+                        var e = '<div  style="overflow: hidden;display:-webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp:3" title="'+value+'">'+value+'</div>';
+                        return e;
+                    }
+                }
+            ]
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{::link},~{::style})">
+    <title>角色管理</title>
+    <link th:href="@{/static/bootstrapTable/table.css}" rel="stylesheet"/>
+    <link th:href="@{/static/bootstrapTable/bootstrap-table.css}" rel="stylesheet"/>
+    <style type="text/css">
+        #roleTable{
+            display: table;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="common/body::breadcrumb"></div>
+<div class="Hui-admin-content clearfix">
+    <div class="table-box">
+        <shiroPermission name="sys:role:edit">
+            <div class="cl pd-5 bg-1 bk-gray"> <span class="l"> <a  id="add_btn" class="btn btn-primary radius" href="javascript:;" onclick="add()"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a> </span> </div>
+        </shiroPermission>
+        <div id="roleTable"></div>
+    </div>
+</div>
+<div th:replace="common/foot::common_foot"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table-zh-CN.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        getTableData();
+    });
+
+    function getTableData(){
+        $("#roleTable").bootstrapTable({
+            method:'get',
+            cache:'false',
+            dataType:'JSON',
+            url:"[[@{/sys/role/list/data}]]",
+            pagination: true,
+            sidePagination:'client',
+            paginationLoop: false,
+            pageSize: 10,
+            sortName:'updateDate',
+            sortOrder:'desc',
+            search:false,
+            uniqueId:"id",
+            pageList: ['10','20','All'],
+            columns:[
+                {
+                    title:'序号',
+                    align:'center',
+                    width:40,
+                    formatter:function(value, row, index) {
+                        var pageSize=$("#roleTable").bootstrapTable('getOptions').pageSize;
+                        var pageNumber=$("#roleTable").bootstrapTable('getOptions').pageNumber;
+                        return pageSize*(pageNumber-1)+index+1;
+                    },
+                },
+                {
+                    field:'name',
+                    title:'角色名称',
+                    align:'center'
+                },
+                {
+                    field:'enname',
+                    title:'英文名称',
+                    align:'center'
+                },
+                {
+                    field:'officeName',
+                    title:'归属机构',
+                    align:'center',
+                    formatter:function (value, row, index) {
+                        return row.office.name;
+                    }
+                },
+                {
+                    field:'dataScope',
+                    title:'数据范围',
+                    align:'center',
+                    formatter:function (value, row, index) {
+                        if(value){
+                            return value;
+                        }else return '无';
+                    }
+                },
+                {
+                    field:'sort',
+                    title:'角色排序',
+                    align:'center',
+                    formatter:function (value, row, index) {
+                        if(value){
+                            return value;
+                        }else return '无';
+                    }
+                },
+                {
+                    field:'_operate',
+                    title:'操作',
+                    align:'center',
+                    formatter:function(value,row,index){
+                        var id = row.id ;
+                        var e = '<a style="text-decoration: none;" onclick="edit(\''+id+'\')"><i class="Hui-iconfont">&#xe6df;</i></a>';
+                        var d = '<a style="text-decoration: none;" onclick="remove(\''+id+'\')"><i class="Hui-iconfont">&#xe6e2;</i></a>';
+                        return e+d;
+                    }
+                }
+            ]
+        });
+        var text = $("#add_btn").text() ;
+        if('' == text || null == text ||'undefined' == text ){
+            $("#roleTable").bootstrapTable('hideColumn','_operate');
+        }
+    };
+
+    function add(){
+        var title = '添加角色';
+        var url = "[[@{/sys/role/form}]]";
+        layer_show_full(title,url);
+    }
+
+    function edit(id){
+        var title = '编辑角色';
+        var url = "[[@{/sys/role/form?id=}]]"+id;
+        layer_show_full(title,url);
+    }
+
+    function remove(id){
+        var url = "[[@{/sys/role/delete?id=}]]"+id;
+        removeItem(url,"#roleTable");
+    }
+</script>
+</html>

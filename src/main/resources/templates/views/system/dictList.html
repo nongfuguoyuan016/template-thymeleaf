@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{::link},~{::style})">
+    <title>字典管理</title>
+    <link th:href="@{/static/bootstrapTable/table.css}" rel="stylesheet"/>
+    <link th:href="@{/static/bootstrapTable/bootstrap-table.css}" rel="stylesheet"/>
+    <style type="text/css">
+        #dictTable{
+            display: table;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="common/body::breadcrumb"></div>
+    <div class="Hui-admin-content clearfix">
+        <div class="text-c">
+            <form class="form form-horizontal">
+                类型： <input type="text" class="input-text" style="width:200px" placeholder="输入类型" id="type" name="description" />
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                描述： <input type="text" class="input-text" style="width:200px" placeholder="输入描述" id="description" name="description" />
+                <button type="button" class="btn btn-success" id="search_btn"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+            </form>
+        </div>
+        <div class="table-box">
+            <shiroPermission name="sys:dict:edit">
+                <div class="cl pd-5 bg-1 bk-gray"> <span class="l"> <a class="btn btn-primary radius" href="javascript:;" id="add_btn"><i class="Hui-iconfont">&#xe600;</i> 添加字典</a> </span> </div>
+            </shiroPermission>
+            <div id="dictTable"></div>
+        </div>
+    </div>
+    <div th:replace="common/foot::common_foot"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table.js}"></script>
+<script type="text/javascript" th:src="@{/static/bootstrapTable/bootstrap-table-zh-CN.js}"></script>
+<script type="text/javascript">
+    var temp ;
+    $(document).ready(function() {
+
+        temp = {
+            type:$("#type").val(),
+            description:$("#description").val()
+        }
+        $("#add_btn").click(function(){
+            var title = '添加字典';
+            var url = "[[@{/sys/dict/form}]]";
+            layer_show_full(title,url);
+        })
+
+        $("#search_btn").click(function(){
+            temp = {
+                type:$("#type").val(),
+                description:$("#description").val()
+            }
+            $("#dictTable").bootstrapTable('refresh',{pageNum:1});
+        })
+
+        initTable();
+    })
+
+    function edit(id){
+        var title = '编辑字典';
+        var url = "[[@{/sys/dict/form?id=}]]"+id;
+        layer_show_full(title,url);
+    }
+
+    function remove(id){
+        var url = "[[@{/sys/dict/delete?id=}]]"+id;
+        removeItem(url,"#dictTable");
+    }
+
+    function requestParams(params){
+        temp.pageNo = params.offset/params.limit+1 ;
+        temp.pageSize = pageSize = params.limit ;
+        return temp ;
+    }
+
+    function initTable(){
+        var url ="[[@{/sys/dict/list/data}]]" ;
+        $("#dictTable").bootstrapTable({
+            method:'get',
+            cache:'false',
+            dataType:'JSON',
+            pagination: true,
+            pageNumber:1,
+            pageSize: 10,
+            pageList: [10,15,20],
+            queryParams:requestParams,
+            url:url,
+            sidePagination:'server',
+            search:false,
+            idField:'id',
+            columns:[
+                {
+                    title:'序号',
+                    align:'center',
+                    width:40,
+                    formatter:function(value, row, index) {
+                        var pageSize=$("#dictTable").bootstrapTable('getOptions').pageSize;
+                        var pageNumber=$("#dictTable").bootstrapTable('getOptions').pageNumber;
+                        return pageSize*(pageNumber-1)+index+1;
+                    },
+                },
+                {
+                    field:'type',
+                    title:'类型',
+                    align:'center'
+                },{
+                    field:'description',
+                    title:'描述',
+                    align:'center'
+                },{
+                    field:'value',
+                    title:'键值',
+                    align:'center'
+                },{
+                    field:'label',
+                    title:'标签',
+                    align:'center'
+                },{
+                    field:'sort',
+                    title:'排序',
+                    align:'center'
+                },{
+                    field:'_operate',
+                    title:'操作',
+                    align:'center',
+                    formatter:function(value,row,index){
+                        var id = row.id ;
+                        var e = '<a title="编辑" style="text-decoration:none" onclick="edit(\''+id+'\')"><i class="Hui-iconfont">&#xe6df;</i></a>';
+                        var d = '<a title="删除" style="text-decoration:none"  onclick="remove(\''+id+'\')"><i class="Hui-iconfont">&#xe6e2;</i></a>';
+                        return e+d;
+                    }
+                }
+            ]
+        });
+
+        var text = $("#add_btn").text() ;
+        if('' == text || null == text ||'undefined' == text ){
+            $("#dictTable").bootstrapTable('hideColumn','_operate');
+        }
+    }
+</script>
+</html>

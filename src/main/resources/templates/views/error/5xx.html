@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="common/head::common_head(~{::title},~{},~{::style})">
+        <title>5xx</title>
+        <style type="text/css">
+            article {
+                padding-top: 30px;
+                font-size: 45px;
+            }
+        </style>
+    </head>
+</head>
+<body>
+<article class="page-404 minWP text-c">
+    <p class="error-title"><i class="Hui-iconfont va-m">&#xe688;</i>
+        <span class="va-m"> 5xx</span>
+    </p>
+    <p class="error-description">系统出了点问题，请稍后重试</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},_,~{::style})">
+    <title>菜单管理</title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1%;
+        }
+    </style>
+</head>
+<body>
+
+    <form th:action="@{/sys/menu/save}" th:object="${menu}" method="post" class="form form-horizontal" id="menuForm">
+    <input th:attr="id='id',name='id',value=*{id}" type="hidden"/>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>名称：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input type="text" class="input-text" placeholder="名称" th:attr="id='name',name='name',value=*{name}" />
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>上级菜单：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="parentMenu" class="layerselect" th:attr="data-title='菜单',data-url='/sys/menu/treeData?isShowHide=0',data-extId=*{id}">
+                <input th:attr="id='parentMenuId',name='parent.id',value=*{parent.id}" type="hidden" />
+                <input th:attr="id='parentMenuName',name='parent.name',value=*{parent.name}" type="text" class="input-text required" readonly/>
+                <a id="parentMenuBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">链接：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:attr="id='href',name='href',value=*{href}" type="text" class="input-text" placeholder="链接" />
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">图标：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:attr="id='icon',name='icon', value=*{icon}" type="hidden"/>
+            <i class="Hui-iconfont" style="font-size: 22px;margin-right: 5px;" id="iconDisplay" th:text="*{icon}"></i>
+            <a class="btn btn-primary radius" href="javascript:;" id="iconButton"><i class="Hui-iconfont">&#xe600;</i> 选择图标</a>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">可见：</label>
+        <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+            <div class="radio-box">
+                <input th:attr="id='isShow',name='isShow',value='1'" th:checked="*{isShow eq '1'}" type="radio"  />
+                <label>显示</label>
+            </div>
+            <div class="radio-box">
+                <input th:attr="id='isShow',name='isShow',value='0'" th:checked="*{isShow eq '0'}" type="radio"  />
+                <label>隐藏</label>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">权限标识：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:attr="id='permission',name='permission',value=*{permission}" type="text" class="input-text" placeholder='控制器中定义的权限标识，如：@RequiresPermissions("权限标识")' />
+        </div>
+    </div>
+
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">排序：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:attr="id='sort',name='sort',value=*{sort}" type="text" class="input-text" placeholder="升序排列" />
+        </div>
+    </div>
+
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">备注：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <textarea th:attr="id='remarks',name='remarks',value=*{remarks}" class="textarea" placeholder="备注"></textarea>
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            <input class="btn btn-default radius" type="button" id="back_btn" value="&nbsp;&nbsp;返回&nbsp;&nbsp;">
+        </div>
+    </div>
+</form>    
+
+    <div th:replace="common/foot::common_foot"></div>
+    <div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/common/js/select.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#back_btn").click(function(){
+           layer_close();
+        });
+
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        registTreeSelect('parentMenu');
+
+        registIconSelect('icon');
+
+        $("#menuForm").validate({
+            rules:{
+                name:{
+                    isChinese:true,
+                    required:true,
+                    maxlength:16
+                },
+                'parent.id':{
+                    required:true,
+                    maxlength:80
+                },
+                isShow:{
+                    required:true
+                },
+                permission:{
+                    maxlength:100
+                },
+                sort:{
+                    isIntGteZero:true,
+                    range:[0,100]
+                }
+
+
+            },
+            onkeyup:false,
+            focusCleanup:true,
+            success:"valid",
+            submitHandler:function(form){
+                submitForm(form);
+            }
+        });
+    });
+
+</script>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{},~{::style})">
+    <title>字典管理</title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1%;
+        }
+    </style>
+</head>
+<body>
+<form id="inputForm" th:object="${dict}" th:action="@{/sys/dict/save}" method="post" class="form form-horizontal">
+    <input type="hidden" th:field="*{id}"/>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>键值：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{value}" htmlEscape="false" maxlength="50" class="input-text required"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标签：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{label}" htmlEscape="false" maxlength="50" class="input-text required"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>类型：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{type}" htmlEscape="false" maxlength="50" class="input-text required abc"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>描述：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{description}" htmlEscape="false" maxlength="50" class="input-text required"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>排序：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{sort}" htmlEscape="false" maxlength="11" class="input-text required digits"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">父级字典项：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{parentId}" class="input-medium" >
+                <option value="0">请选择</option>
+                <option th:each="d : ${firstDicts}" th:value="${d.id}" th:text="${d.label}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">备注：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea input-xlarge"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <shiroPermission name="sys:dict:edit"><input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/>&nbsp;</shiroPermission>
+            <input id="back_btn" class="btn btn-default radius" type="button" value="&nbsp;&nbsp;返回&nbsp;&nbsp;"/>
+        </div>
+    </div>
+</form>
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#back_btn").click(function(){
+            layer_close();
+        });
+
+        $("#value").focus();
+        $("#inputForm").validate({
+            onsubmit:function(element) { $(element).valid(); },
+            submitHandler: function(form){
+                submitForm(form);
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                $("#messageBox").text("输入有误，请先更正。");
+                if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+</script>
+</html>

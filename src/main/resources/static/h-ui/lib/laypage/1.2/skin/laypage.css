@@ -1,0 +1,38 @@
+/*!
+ laypage默认样式
+*/
+.laypage_main{font-size:0; clear:both; color:#666}
+.laypage_main a{text-decoration:none; color:#666}
+.laypage_main a,.laypage_main span{height:20px; line-height:20px;padding: 6px 12px;display:inline-block; vertical-align: top;
+    border:1px solid #ddd;margin-left: -1px;font-size: 14px;}
+.laypage_main input, .laypage_main button{ border:1px solid #ccc; background-color:#fff}
+.laypage_main input{width:40px; height:26px; line-height:26px; margin:0 5px; padding:0 5px}
+.laypage_main button{height:28px; line-height:28px; margin-left:5px; padding:0 10px; color:#666}
+.laypage_main .laypage_prev {
+    -webkit-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    -moz-border-radius-topleft: 4px;
+}
+.laypage_main .laypage_next {
+    -webkit-border-top-right-radius: 4px;
+    border-top-right-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    -moz-border-radius-bottomright: 4px;
+}
+
+/* 默认皮肤 */
+.laypageskin_default a{ background-color:#fff;}
+.laypageskin_default a:hover{ background-color:#337ab7; color:#fff}
+.laypageskin_default span{height:20px; line-height:20px; color:#999}
+.laypageskin_default .laypage_curr{font-weight:700; color:#fff;background-color: #337ab7;}
+
+
+
+/* 一般用于信息流加载 */
+.laypageskin_flow{text-align:center}
+.laypageskin_flow .page_nomore{color:#999}
