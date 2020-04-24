@@ -19,7 +19,7 @@
 
 <article class="page-container">
     <form id="inputForm" th:object="${role}" th:action="@{/sys/role/save}" method="post" class="form form-horizontal">
-        <hidden path="id"/>
+        <input type="hidden" th:field="*{id}"/>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>归属机构：</label>
             <div class="formControls col-xs-8 col-sm-9">

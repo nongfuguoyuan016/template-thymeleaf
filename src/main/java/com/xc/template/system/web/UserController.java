@@ -49,12 +49,6 @@ public class UserController extends BaseController {
 	}
 
 	@RequiresPermissions("sys:user:view")
-	@RequestMapping(value = {"index"})
-	public String index(User user, Model model) {
-		return "system/userIndex";
-	}
-
-	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, Model model) {
 		model.addAttribute("user",user);
