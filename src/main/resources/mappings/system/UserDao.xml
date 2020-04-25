@@ -17,6 +17,7 @@
 		a.remarks,
 		a.login_flag,
 		a.photo,
+		a.user_type,
 		a.create_by AS "createBy",
 		a.create_date,
 		a.update_by AS "updateBy",
@@ -59,7 +60,6 @@
 		a.phone,
 		a.mobile,
 		a.user_type,
-		a.user_job,
 		a.login_ip,
 		a.login_date,
 		a.remarks,
@@ -75,11 +75,9 @@
 
 	<sql id="userJoins">
 		JOIN sys_office c ON c.id = a.company_id
-		JOIN sys_area ca ON ca.id =
-		c.area_id
+		JOIN sys_area ca ON ca.id = c.area_id
 		JOIN sys_office o ON o.id = a.office_id
-		JOIN sys_area oa ON
-		oa.id = o.area_id
+		JOIN sys_area oa ON oa.id = o.area_id
 		LEFT JOIN sys_user cu ON cu.id = c.primary_person
 		LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
 		LEFT JOIN sys_user ou ON ou.id = o.primary_person
@@ -111,8 +109,7 @@
 		FROM sys_user a
 		<include refid="userJoins" />
 		<if test="role != null and role.id != null and role.id != ''">
-			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id
-			= #{role.id}
+			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
 		</if>
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.id != null and company.id != ''">
@@ -159,10 +156,7 @@
 
 	<!-- 查询全部用户数目 -->
 	<select id="findAllCount" resultType="long">
-		SELECT
-		COUNT(1)
-		FROM sys_user a
-		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		SELECT COUNT(1) FROM sys_user a WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 	</select>
 
 	<select id="getUserByUserTypeAndOfficeId" resultType="User">
@@ -189,7 +183,6 @@
 		phone,
 		mobile,
 		user_type,
-		user_job,
 		create_by,
 		create_date,
 		update_by,
@@ -210,7 +203,6 @@
 		#{phone},
 		#{mobile},
 		#{userType},
-		#{userJob},
 		#{createBy.id},
 		#{createDate},
 		#{updateBy.id},
@@ -235,7 +227,6 @@
 		phone = #{phone},
 		mobile = #{mobile},
 		user_type = #{userType},
-		user_job = #{userJob},
 		update_by = #{updateBy.id},
 		update_date = #{updateDate},
 		remarks = #{remarks},

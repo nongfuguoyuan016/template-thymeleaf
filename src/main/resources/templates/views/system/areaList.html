@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{::link},~{::style})">
+    <title>区域管理</title>
+    <link rel="stylesheet" th:href="@{/static/treetable/css/treeTable.min.css}" />
+    <style type="text/css">
+
+    </style>
+</head>
+<body>
+<nav th:replace="common/body::breadcrumb"></nav>
+<div class="Hui-admin-content clearfix">
+    <shiroPermission name="sys:area:edit">
+        <div class="cl pd-5 bg-1 bk-gray">
+            <span class="l"> <a class="btn btn-primary radius" href="javascript:;" onclick="addArea()"><i class="Hui-iconfont">&#xe600;</i> 添加区域</a> </span>
+        </div>
+    </shiroPermission>
+    <table id="treeTable" class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>区域名称</th><th>区域编码</th><th>区域类型</th><th>备注</th><shiroPermission name="sys:area:edit"><th>操作</th></shiroPermission>
+        </tr>
+        </thead>
+        <tbody id="treeTableList"></tbody>
+    </table>
+</div>
+<script type="text/template" id="treeTableTpl">
+    <tr id="{{row.id}}" pId="{{pid}}" class="text-c">
+        <td><a href="${ctx}/sys/area/form?id={{row.id}}">{{row.name}}</a></td>
+        <td>{{row.code}}</td>
+        <td>{{dict.type}}</td>
+        <td>{{row.remarks}}</td>
+        <shiroPermission name="sys:area:edit"><td>
+            <a title="编辑" style="text-decoration: none;" onclick="editArea('{{row.id}}')"><i class="Hui-iconfont">&#xe6df;</i></a>
+            <a title="删除" style="text-decoration: none;" onclick="deleteArea('{{row.id}}')"><i class="Hui-iconfont">&#xe6e2;</i></a>
+            <a title="添加下级区域" style="text-decoration: none;" onclick="addChildArea('{{row.id}}')"><i class="Hui-iconfont">&#xe604;</i></a>
+        </td></shiroPermission>
+    </tr>
+</script>
+<div th:replace="common/foot::common_foot"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/common/js/mustache.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/treetable/js/jquery.treeTable.min.js}"></script>
+<script type="text/javascript">
+    var types = [(${types})]
+    $(document).ready(function () {
+        var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
+        var data = [(${list})], rootId = "0";
+        addRow("#treeTableList", tpl, data, rootId, true);
+        $("#treeTable").treeTable({expandLevel : 5});
+    });
+
+    function addRow(list, tpl, data, pid, root){
+        for (var i=0; i<data.length; i++){
+            var row = data[i];
+            var rowParentId = row.parentId || '';
+            if (rowParentId == pid){
+                $(list).append(Mustache.render(tpl, {
+                    dict: {type: getTypeLabel(row.type)},
+                    pid: (root ? 0 : pid),
+                    row: row
+                }));
+                addRow(list, tpl, data, row.id);
+            }
+        }
+    }
+
+    function getTypeLabel(type) {
+        if(types && Array.isArray(types)) {
+            var d = types.find(t => t.value == type);
+            return d ? d.label : '';
+        }
+    }
+
+    function addArea(){
+        var title = '添加区域';
+        var url = "[[@{/sys/area/form}]]";
+        layer_show_full(title,url);
+    }
+
+    function editArea(id){
+        var title = '编辑区域';
+        var url = "[[@{/sys/area/form?id=}]]"+id;
+        layer_show_full(title,url);
+    }
+
+    function deleteArea(id){
+        var url = "[[@{/sys/area/delete?id=}]]"+id;
+        removeItemAndRefresh(url);
+    }
+
+    function addChildArea(parentId){
+        var title = '添加下级区域';
+        var url = "[[@{/sys/area/form?parent.id=}]]"+parentId;
+        layer_show_full(title,url);
+    }
+</script>
+</html>

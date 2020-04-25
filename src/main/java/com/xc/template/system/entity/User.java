@@ -34,6 +34,7 @@ public class User extends DataEntity<User> {
 	private Date loginDate;	// 最后登陆日期
 	private String loginFlag;	// 是否允许登陆
 	private String photo;	// 头像
+	private String userType;
 
 	private String oldLoginName;// 原登录名
 	private String newPassword;	// 新密码
@@ -168,6 +169,15 @@ public class User extends DataEntity<User> {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	@Length(min=0, max=100, message="用户类型长度必须介于 1 和 100 之间")
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	@Override

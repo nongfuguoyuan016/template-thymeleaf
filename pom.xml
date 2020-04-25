@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <shiro.version>1.2.3</shiro.version>
+        <shiro.version>1.5.2</shiro.version>
     </properties>
 
     <dependencies>
@@ -111,6 +111,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
@@ -132,6 +138,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>2.1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.20</version>
         </dependency>
 
         <dependency>

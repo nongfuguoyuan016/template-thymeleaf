@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{},~{::style})">
+    <title>修改密码</title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="common/body::breadcrumb"></div>
+<form id="inputForm" th:object="${user}" th:action="@{/sys/user/modifyPwd}" method="post" class="form form-horizontal">
+    <input type="hidden" th:filed="*{id}"/>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>旧密码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input id="oldPassword" name="oldPassword" type="password" value="" maxlength="50" minlength="3" class="required input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>新密码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input id="newPassword" name="newPassword" type="password" value="" maxlength="50" minlength="3" class="required input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>确认新密码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input id="confirmNewPassword" name="confirmNewPassword" type="password" value="" maxlength="50" minlength="3" class="required input-text" equalTo="#newPassword"/>
+        </div>
+    </div>
+    <div class="row cl text-c">
+        <div class="formControls ol-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+            <button type="submit" id="btnSubmit" class="btn btn-primary radius">&nbsp;&nbsp;保存&nbsp;&nbsp;</button>
+            <button type="button" id="btnClose" class="btn btn-default radius">&nbsp;&nbsp;关闭&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnClose').click(function(){
+            closeCurrIframeByHref(window.location.pathname);
+        })
+
+        $("#oldPassword").focus();
+        $("#inputForm").validate({
+            rules: {
+            },
+            messages: {
+                confirmNewPassword: {equalTo: "输入与上面相同的密码"}
+            },
+            submitHandler: function(form){
+                var u = $(form).attr("action");
+                var d = $(form).serialize() ;
+                $.ajax({
+                    type:'POST',
+                    url:u,
+                    data:d,
+                    beforeSend:function(){
+                        layer.load(1,{shade: [0.8, '#393D49']});
+                    },
+                    success:function(data){
+                        layer.close(layer.index);
+                        if(data.code == 0){
+                            $('.formControls input').each(function (ind, ele) {
+                                $(ele).val('');
+                            });
+                        }
+                        layer.msg(data.msg);
+                    },
+                    error:function(){
+                        layer.close(layer.index);
+                        layer.msg('操作异常 ,请稍后重试');
+                    }
+                })
+
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                $("#messageBox").text("输入有误，请先更正。");
+                if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+</script>
+</html>

@@ -12,6 +12,7 @@ import com.xc.template.system.entity.Office;
 import com.xc.template.system.entity.Role;
 import com.xc.template.system.entity.User;
 import com.xc.template.system.service.SystemService;
+import com.xc.template.system.utils.DictUtils;
 import com.xc.template.system.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,7 @@ public class UserController extends BaseController {
 			user.setOffice(UserUtils.getUser().getOffice());
 		}
 		model.addAttribute("user", user);
+		model.addAttribute("userTypes", DictUtils.getDictList("sys_user_type"));
 		model.addAttribute("allRoles", systemService.findAllRole());
 		if (user.getId() != null) {
 			model.addAttribute("hasRoles",user.getRoleList() != null && user.getRoleList().size() > 0 ? user.getRoleList().stream().map(a -> a.getId())
@@ -121,7 +123,7 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "delete")
 	@ResponseBody
-	public JSONResult delete(User user, RedirectAttributes redirectAttributes) {
+	public JSONResult delete(User user) {
 		if (UserUtils.getUser().getId().equals(user.getId())){
 			return JSONResult.fail( "删除用户失败, 不允许删除当前用户");
 		}else if (User.isAdmin(user.getId())){
@@ -152,15 +154,16 @@ public class UserController extends BaseController {
 
 	/**
 	 * 用户信息显示及保存
-	 * @param user
 	 * @param model
 	 * @return
 	 */
 	@RequiresPermissions("user")
 	@RequestMapping(value = "info", method = RequestMethod.GET)
-	public String info(User user, HttpServletResponse response, Model model) {
+	public String info(Model model) {
 		User currentUser = UserUtils.getUser();
 		model.addAttribute("user", currentUser);
+		model.addAttribute("userType", DictUtils.getDictLabels(currentUser.getUserType(), "sys_user_type", "无"));
+		model.addAttribute("roleNames", currentUser.getRoleList().stream().map(Role::getName).collect(Collectors.joining(",")));
 		model.addAttribute("Global", new Global());
 		return "system/userInfo";
 	}

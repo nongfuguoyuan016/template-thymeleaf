@@ -2,11 +2,13 @@ package com.xc.template.system.web;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.xc.template.common.utils.FastJsonUtils;
 import com.xc.template.common.utils.JSONResult;
 import com.xc.template.common.utils.StringUtils;
 import com.xc.template.common.web.BaseController;
 import com.xc.template.system.entity.Area;
 import com.xc.template.system.service.AreaService;
+import com.xc.template.system.utils.DictUtils;
 import com.xc.template.system.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,8 @@ public class AreaController extends BaseController {
 	@RequiresPermissions("sys:area:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Area area, Model model) {
-		model.addAttribute("list", areaService.findAll());
+		model.addAttribute("list", FastJsonUtils.toJsonArrayIncludeProperties(areaService.findAll(),"id","parentId","name","type","code","remarks"));
+		model.addAttribute("types", FastJsonUtils.toJsonArrayIncludeProperties(DictUtils.getDictList("sys_area_type"),"label","value"));
 		return "system/areaList";
 	}
 
@@ -58,6 +61,7 @@ public class AreaController extends BaseController {
 		}
 		area.setParent(areaService.get(area.getParent().getId()));
 		model.addAttribute("area", area);
+		model.addAttribute("types",DictUtils.getDictList("sys_area_type"));
 		return "system/areaForm";
 	}
 	

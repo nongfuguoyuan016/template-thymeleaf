@@ -4,8 +4,11 @@ import com.xc.template.common.utils.JSONResult;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -31,6 +34,16 @@ public class GlobalExceptionHandler {
         if(isAjax(request)) {
             return JSONResult.ex("无效的地址");
         }else return new ModelAndView("/error/404");
+    }
+
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Object httpMessageNotReadableException(HttpServletRequest request, HttpMessageNotReadableException ex) {
+        log.error("GlobalExceptionHandler catch HttpMessageNotReadableException: ",ex);
+        if(isAjax(request)) {
+            return JSONResult.ex("请求参数无效");
+        }else return new ModelAndView("/error/4xx");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

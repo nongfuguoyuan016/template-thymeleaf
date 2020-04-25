@@ -19,15 +19,21 @@
     <div class="row cl">
         <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>归属公司：</label>
         <div class="formControls col-xs-8 col-sm-9">
-            <sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-                            title="公司" url="/sys/office/treeData?type=1" cssClass="input-text required"/>
+            <div id="company" class="layerselect" th:attr="data-title='公司',data-url='/sys/office/treeData?type=1'">
+                <input th:attr="id='companyId',name='company.id',value=*{company.id}" type="hidden" />
+                <input th:attr="id='companyName',name='company.name',value=*{company.name}" type="text" class="input-text required" readonly/>
+                <a id="companyBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
         </div>
     </div>
     <div class="row cl">
         <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>归属部门：</label>
         <div class="formControls col-xs-8 col-sm-9">
-            <sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-                            title="部门" url="/sys/office/treeData?type=2" cssClass="input-text required" notAllowSelectParent="false"/>
+            <div id="office" class="layerselect" th:attr="data-title='部门',data-url='/sys/office/treeData?type=2'">
+                <input th:attr="id='officeId',name='office.id',value=*{office.id}" type="hidden" />
+                <input th:attr="id='officeName',name='office.name',value=*{office.name}" type="text" class="input-text required" readonly/>
+                <a id="officeBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
         </div>
     </div>
     <div class="row cl">
@@ -53,7 +59,7 @@
         <label class="form-label col-xs-4 col-sm-2"><span th:if="*{#strings.isEmpty(id)}" class="c-red">*</span>密码：</label>
         <div class="formControls col-xs-8 col-sm-9">
             <input id="newPassword" name="newPassword" type="password" value="" maxlength="50" minlength="3" class="${empty user.id?'required':''} input-text"/>
-            <span th:if="*{not #strings.isEmpty(id)}" class="help-inline">若不修改密码，请留空。</span>
+            <span th:if="*{not #strings.isEmpty(id)}" class="c-999">若不修改密码，请留空。</span>
         </div>
     </div>
     <div class="row cl">
@@ -84,9 +90,18 @@
         <label class="form-label col-xs-4 col-sm-2">是否允许登录：</label>
         <div class="formControls col-xs-8 col-sm-9">
             <select th:field="*{loginFlag}">
-                <options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+                <option value="1">是</option>
+                <option value="0">否</option>
             </select>
-            <span class="help-inline">“是”代表此账号允许登录，“否”则表示此账号不允许登录</span>
+            <span class="c-999">“是”代表此账号允许登录，“否”则表示此账号不允许登录</span>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">职务：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{userType}">
+                <option th:each="type : ${userTypes}" th:value="${type.value}" th:text="${type.label}"></option>
+            </select>
         </div>
     </div>
     <div class="row cl">
@@ -104,20 +119,18 @@
             <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea"/>
         </div>
     </div>
-    <c:if test="${not empty user.id}">
-        <div class="row cl">
+        <div class="row cl" th:if="*{not #strings.isEmpty(id)}">
             <label class="form-label col-xs-4 col-sm-2">创建时间：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <label class="lbl"><fmt:formatDate value="${user.createDate}" type="both" dateStyle="full"/></label>
+                <label class="lbl" th:text="*{#dates.format(createDate,'yyyy-MM-dd HH:mm:ss')}"></label>
             </div>
         </div>
-        <div class="row cl">
+        <div class="row cl" th:if="*{not #strings.isEmpty(id) && not #strings.isEmpty(loginIp)}">
             <label class="form-label col-xs-4 col-sm-2">最后登陆：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <label class="lbl">IP: ${user.loginIp}&nbsp;&nbsp;&nbsp;&nbsp;时间：<fmt:formatDate value="${user.loginDate}" type="both" dateStyle="full"/></label>
+                <label class="lbl">IP: [[*{loginIp}]]&nbsp;&nbsp;&nbsp;&nbsp;时间：[[*{#dates.format(loginDate,'yyyy-MM-dd HH:mm:ss')}]]</label>
             </div>
         </div>
-    </c:if>
     <div class="row cl">
         <div class="text-c">
             <shiroPermission name="sys:user:edit"><input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/>&nbsp;</shiroPermission>
@@ -128,8 +141,13 @@
 <div th:replace="common/foot::common_foot"></div>
 <div th:replace="common/foot::validator"></div>
 </body>
+<script type="text/javascript" th:src="@{/static/common/js/select.js}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        registTreeSelect("company");
+        registTreeSelect("office");
+
         var hasRoles = '[(${hasRoles})]';
 
         $('.check-box input').iCheck({

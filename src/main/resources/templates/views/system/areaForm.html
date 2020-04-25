@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{},~{::style})">
+    <title>区域管理</title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1%;
+        }
+    </style>
+</head>
+<body>
+<form id="inputForm" th:object="${area}" th:action="@{/sys/area/save}" method="post" class="form form-horizontal">
+    <input type="hidden" th:field="*{id}"/>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">上级区域：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="area" class="layerselect" th:attr="data-title='区域',data-url='/sys/area/treeData',data-extId=*{id}">
+                <input th:attr="id='areaId',name='parent.id',value=*{parent != null ? parent.id : ''}" type="hidden" />
+                <input th:attr="id='areaName',name='parent.name',value=*{parent != null ? parent.name : ''}" type="text" class="input-text required" readonly/>
+                <a id="areaBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>区域名称：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{name}" htmlEscape="false" maxlength="50" class="required input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">区域编码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{code}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">区域类型：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{type}" class="input-medium">
+                <option th:each="t : ${types}" th:text="${t.label}" th:value="${t.value}" htmlEscape="false"/>
+            </select>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">备注：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <shiroPermission name="sys:area:edit"><input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/>&nbsp;</shiroPermission>
+            <input id="back_btn" class="btn btn-default radius" type="button" value="&nbsp;&nbsp;返回&nbsp;&nbsp;"/>
+        </div>
+    </div>
+</form>
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/common/js/select.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        registTreeSelect('area');
+
+        $("#back_btn").click(function(){
+            layer_close();
+        });
+
+        $("#name").focus();
+        $("#inputForm").validate({
+            submitHandler: function(form){
+                submitForm(form);
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                $("#messageBox").text("输入有误，请先更正。");
+                if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+</script>
+</html>

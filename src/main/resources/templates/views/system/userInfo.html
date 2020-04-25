@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},~{},~{::style})">
+    <title>个人信息</title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1% 1%;
+        }
+        .formControls .form-label{
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="common/body::breadcrumb"></div>
+<form id="inputForm" th:object="${user}" th:action="@{/sys/user/info}" method="post" class="form form-horizontal">
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">归属公司：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label" th:text="*{company.name}"></label>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">归属部门：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label" th:text="*{office.name}"></label>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">姓名：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{name}" htmlEscape="false" maxlength="50" class="input-text required"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">邮箱：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{email}" htmlEscape="false" maxlength="50" class="input-text email"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">电话：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{phone}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">手机：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{mobile}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">备注：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">用户类型：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label" th:text="${userType}"></label>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">用户角色：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label" th:text="${roleNames}"></label>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">上次登录：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label">IP： [[*{oldLoginIp}]]&nbsp;&nbsp;&nbsp;&nbsp;时间：[[*{#dates.format(oldLoginDate,'yyyy-MM-dd HH:mm:ss')}]]</label>
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+            <input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/>
+            <input id="btnClose" class="btn btn-default radius" type="button" value="&nbsp;&nbsp;关闭&nbsp;&nbsp;"/>
+        </div>
+    </div>
+</form>
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnClose').click(function(){
+            closeCurrIframeByHref(window.location.pathname);
+        })
+
+        $("#inputForm").validate({
+            submitHandler: function(form){
+                var u = $(form).attr("action");
+                var d = $(form).serialize() ;
+                $.ajax({
+                    type:'POST',
+                    url:u,
+                    data:d,
+                    beforeSend:function(){
+                        layer.load(1,{shade: [0.8, '#393D49']});
+                    },
+                    success:function(data){
+                        layer.close(layer.index);
+                        layer.msg(data.msg);
+                    },
+                    error:function(){
+                        layer.close(layer.index);
+                        layer.msg('操作异常 ,请稍后重试');
+                    }
+                })
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                $("#messageBox").text("输入有误，请先更正。");
+                if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+</script>
+</html>
