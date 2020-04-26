@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head::common_head(~{::title},_,~{::style})">
+    <title></title>
+    <style type="text/css">
+        body{
+            min-height: 98%;
+        }
+        .form{
+            padding: 1%;
+        }
+    </style>
+</head>
+<body>
+<form id="inputForm" th:object="${office}" th:action="@{/sys/office/save}" method="post" class="form form-horizontal">
+    <input type="hidden" th:field="*{id}"/>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">上级机构：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="office" class="layerselect" th:attr="data-title='机构',data-url='/sys/office/treeData', data-extId=*{id}">
+                <input th:attr="id='officeId',name='parent.id',value=*{parent!=null?parent.id:''}" type="hidden" />
+                <input th:attr="id='officeName',name='parent.name',value=*{parent!=null?parent.name:''}" type="text" class="input-text" readonly/>
+                <a id="officeBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>归属区域：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="area" class="layerselect" th:attr="data-title='区域',data-url='/sys/area/treeData'">
+                <input th:attr="id='areaId',name='area.id',value=*{area!=null?area.id:''}" type="hidden" />
+                <input th:attr="id='areaName',name='area.name',value=*{area!=null?area.name:''}" type="text" class="input-text required" readonly/>
+                <a id="areaBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>机构名称：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{name}" htmlEscape="false" maxlength="50" class="input-text required"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">机构编码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{code}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">机构类型：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{type}" class="input-medium">
+                <option th:each="t : ${types}" th:text="${t.label}" th:value="${t.value}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">机构级别：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{grade}" class="input-medium">
+                <option th:each="t : ${grades}" th:text="${t.label}" th:value="${t.value}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">是否可用：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select th:field="*{useable}" class="input-medium">
+                <option value="1">是</option>
+                <option value="0">否</option>
+            </select>
+            <span class="c-999">“是”代表此账号允许登陆，“否”则表示此账号不允许登陆</span>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">主负责人：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="primaryPerson" class="layerselect" th:attr="data-title='用户',data-url='/sys/office/treeData?type=3',data-notAllowSelectParent='true'">
+                <input th:attr="id='primaryPersonId',name='primaryPerson.id',value=*{primaryPerson != null ?primaryPerson.id:''}" type="hidden" />
+                <input th:attr="id='primaryPersonName',name='primaryPerson.name',value=*{primaryPerson != null?primaryPerson.name:''}" type="text" class="input-text" readonly/>
+                <a id="primaryPersonBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">副负责人：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="deputyPerson" class="layerselect" th:attr="data-title='用户',data-url='/sys/office/treeData?type=3',data-notAllowSelectParent='true'">
+                <input th:attr="id='deputyPersonId',name='deputyPerson.id',value=*{deputyPerson!=null?deputyPerson.id:''}" type="hidden" />
+                <input th:attr="id='deputyPersonName',name='deputyPerson.name',value=*{deputyPerson!=null?deputyPerson.name:''}" type="text" class="input-text" readonly/>
+                <a id="deputyPersonBtn" href="javascript:" class="btn btn-default"><i class="Hui-iconfont"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">联系地址：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{address}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">邮政编码：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{zipCode}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">负责人：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{master}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">电话：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{phone}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">传真：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{fax}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">邮箱：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <input th:field="*{email}" htmlEscape="false" maxlength="50" class="input-text"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">备注：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <textarea th:field="*{remarks}" htmlEscape="false" rows="3" maxlength="200" class="textarea"/>
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="text-c">
+            <shiroPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;"/>&nbsp;</shiroPermission>
+            <input id="back_btn" class="btn btn-default radius" type="button" value="&nbsp;&nbsp;返回&nbsp;&nbsp;"/>
+        </div>
+    </div>
+</form>
+<div th:replace="common/foot::common_foot"></div>
+<div th:replace="common/foot::validator"></div>
+</body>
+<script type="text/javascript" th:src="@{/static/common/js/select.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        registTreeSelect('primaryPerson')
+        registTreeSelect('deputyPerson')
+        registTreeSelect('area')
+        registTreeSelect('office')
+
+        $('.check-box input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $("#back_btn").click(function(){
+            layer_close();
+        });
+
+        $("#name").focus();
+        $("#inputForm").validate({
+            onsubmit:function(element) { $(element).valid(); },
+            submitHandler: function(form){
+                submitForm(form);
+            },
+            errorContainer: "#messageBox",
+            errorPlacement: function(error, element) {
+                error.insertAfter(element);
+            }
+        });
+    });
+</script>
+</html>

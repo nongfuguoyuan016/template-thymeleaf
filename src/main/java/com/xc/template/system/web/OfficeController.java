@@ -3,6 +3,7 @@ package com.xc.template.system.web;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.xc.template.common.config.Global;
+import com.xc.template.common.utils.FastJsonUtils;
 import com.xc.template.common.utils.JSONResult;
 import com.xc.template.common.utils.StringUtils;
 import com.xc.template.common.web.BaseController;
@@ -48,16 +49,18 @@ public class OfficeController extends BaseController {
 	}
 
 	@RequiresPermissions("sys:office:view")
-	@RequestMapping(value = {""})
-	public String index(Office office, Model model) {
-		return "system/officeIndex";
+	@RequestMapping(value = {"list",""})
+	public String list(Office office, Model model) {
+		model.addAttribute("types", FastJsonUtils.toJsonArrayIncludeProperties(DictUtils.getDictList("sys_office_type"), "label","value"));
+        model.addAttribute("list", FastJsonUtils.toJsonArrayIncludeProperties(officeService.findList(office),"id","parent","name","area","code","type","remarks"));
+		return "system/officeList";
 	}
 
 	@RequiresPermissions("sys:office:view")
-	@RequestMapping(value = {"list"})
-	public String list(Office office, Model model) {
-        model.addAttribute("list", officeService.findList(office));
-		return "system/officeList";
+	@RequestMapping(value = "list/data")
+	@ResponseBody
+	public JSONResult list(Office office) {
+		return JSONResult.ok(FastJsonUtils.toJsonArrayIncludeProperties(officeService.findList(office),"id","parent","name","area","code","type","remarks"));
 	}
 	
 	@RequiresPermissions("sys:office:view")
@@ -85,6 +88,8 @@ public class OfficeController extends BaseController {
 			office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size+1 : 1), 3, "0"));
 		}
 		model.addAttribute("office", office);
+		model.addAttribute("types", DictUtils.getDictList("sys_office_type"));
+		model.addAttribute("grades", DictUtils.getDictList("sys_office_grade"));
 		return "system/officeForm";
 	}
 	
